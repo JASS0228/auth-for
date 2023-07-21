@@ -2,12 +2,12 @@ import {
   ConflictException,
   Injectable,
   NotFoundException,
+  UnauthorizedException,
 } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { RegisterDto } from './dto/RegisterDto';
 import * as bcrypt from 'bcrypt';
 import { LoginDto } from './dto/LoginDto';
-import { userInfo } from 'os';
 import { Request, Response } from 'express';
 import { JwtService } from '@nestjs/jwt';
 
@@ -68,12 +68,12 @@ export class AuthService {
       response.cookie('token', token, {
         expires: new Date(Date.now() + 1000 * 3600 * 24 * 1),
       });
+
+      return {
+        msg: 'oK',
+      };
     } catch (error) {
       throw error;
     }
-  }
-
-  async profile(request: Request) {
-    console.log(request.cookies.token);
   }
 }

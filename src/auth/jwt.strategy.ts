@@ -16,7 +16,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     });
   }
 
-  static extractJWTFromCookie(req: Request): string | null {
+  static extractJWTFromCookie(req: Request): string {
     if (req.cookies.token) {
       return req.cookies.token;
     }
@@ -26,14 +26,9 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
   async validate(payload: { id: number; iat: number; exp: number }) {
     const { id } = payload;
 
-    const userFound = this.prismaService.user.findFirst({
+    const userFound = await this.prismaService.user.findFirst({
       where: {
         id,
-      },
-      select: {
-        id: true,
-        email: true,
-        name: true,
       },
     });
 
@@ -41,6 +36,6 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
       throw new UnauthorizedException('Invalid Authorization');
     }
 
-    return { userFound };
+    return { userEmail: userFound.email, userName: userFound.name };
   }
 }
